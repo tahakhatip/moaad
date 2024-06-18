@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل الدخول</title>
+
+
+
+  <style>
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background: #000; /* لون الخلفية أسود */
+  font-family: Arial, sans-serif;
+}
+
+.form-container {
+  background: rgba(255, 255, 255, 0.1); /* لون الخلفية زجاجي */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  padding: 20px;
+  width: 300px;
+  text-align: center;
+  backdrop-filter: blur(10px); /* تأثير الزجاج */
+  -webkit-backdrop-filter: blur(10px); /* تأثير الزجاج للمتصفحات التي تستخدم WebKit */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+h2 {
+  color: red; /* لون العنوان أحمر */
+  margin-bottom: 20px;
+}
+
+label {
+  color: #fff; /* لون النص أبيض */
+  display: block;
+  margin-bottom: 5px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background: red; /* لون الزر أحمر */
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background: darkred; /* لون الزر عند التمرير عليه بالفأرة */
+}
+
+#message {
+  margin-top: 20px;
+  color: red; /* لون الرسالة */
+}
+
+
+
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <form id="loginForm">
+      <h2>تسجيل الدخول</h2>
+      <label for="username">اسم المستخدم:</label>
+      <input type="text" id="username" name="username">
+      <br>
+      <label for="password">كلمة المرور:</label>
+      <input type="password" id="password" name="password">
+      <br>
+      <button type="submit">تسجيل الدخول</button>
+    </form>
+    <form id="confirmForm" style="display: none;">
+      <h2>تأكيد كلمة المرور</h2>
+      <label for="confirmPassword">أدخل كلمة المرور مرة أخرى:</label>
+      <input type="password" id="confirmPassword" name="confirmPassword">
+      <br>
+      <button type="submit">تأكيد</button>
+    </form>
+    <p id="message"></p>
+  </div>
+
+
+  <script>
+    // الكلمة السرية الثابتة التي تحددها أنت
+const fixedPassword = "mySecurePassword";
+
+document.addEventListener('DOMContentLoaded', function() {
+  const loginForm = document.getElementById('loginForm');
+  const confirmForm = document.getElementById('confirmForm');
+
+  if (loginForm) {
+    loginForm.addEventListener('submit', function(event) {
+      event.preventDefault(); // لمنع النموذج من الإرسال الافتراضي
+
+      try {
+        // الحصول على القيم المدخلة
+        let username = document.getElementById('username').value;
+        let password = document.getElementById('password').value;
+        let message = document.getElementById('message');
+
+        console.log('Username:', username);
+        console.log('Password:', password);
+
+        // التحقق من المدخلات
+        if (username === '' && password === '') {
+          message.textContent = 'الرجاء إدخال اسم المستخدم وكلمة المرور.';
+          message.style.color = 'red';
+          console.log('Error: Both fields are empty.');
+        } else if (username === '') {
+          message.textContent = 'الرجاء إدخال اسم المستخدم.';
+          message.style.color = 'red';
+          console.log('Error: Username is empty.');
+        } else if (password === '') {
+          message.textContent = 'الرجاء إدخال كلمة المرور.';
+          message.style.color = 'red';
+          console.log('Error: Password is empty.');
+        } else {
+          // تخزين القيم في localStorage
+          localStorage.setItem('username', username);
+          localStorage.setItem('password', password);
+
+          // إخفاء نموذج تسجيل الدخول وعرض نموذج تأكيد كلمة المرور
+          loginForm.style.display = 'none';
+          confirmForm.style.display = 'block';
+
+          message.textContent = 'يرجى تأكيد كلمة المرور.';
+          message.style.color = 'green';
+          console.log('Success: Proceed to confirm password.');
+        }
+      } catch (error) {
+        console.error('An error occurred:', error);
+        let message = document.getElementById('message');
+        message.textContent = 'حدث خطأ أثناء عملية التسجيل. يرجى المحاولة مرة أخرى.';
+        message.style.color = 'red';
+      }
+    });
+  }
+
+  if (confirmForm) {
+    confirmForm.addEventListener('submit', function(event) {
+      event.preventDefault(); // لمنع النموذج من الإرسال الافتراضي
+
+      try {
+        // الحصول على كلمة المرور المؤكدة
+        let confirmPassword = document.getElementById('confirmPassword').value;
+        let message = document.getElementById('message');
+
+        console.log('Confirm Password:', confirmPassword);
+
+        // التحقق من كلمة المرور المؤكدة
+        if (confirmPassword === '') {
+          message.textContent = 'الرجاء إدخال كلمة المرور للتأكيد.';
+          message.style.color = 'red';
+          console.log('Error: Confirm password is empty.');
+        } else if (confirmPassword !== fixedPassword) {
+          message.textContent = 'كلمة المرور غير صحيحة. الرجاء المحاولة مرة أخرى.';
+          message.style.color = 'red';
+          console.log('Error: Passwords do not match.');
+        } else {
+          message.textContent = 'تم تأكيد كلمة المرور بنجاح! سيتم توجيهك الآن...';
+          message.style.color = 'green';
+          console.log('Success: Password confirmed.');
+
+          // إعادة توجيه المستخدم إلى صفحة أخرى بعد فترة قصيرة لإظهار رسالة التأكيد
+          setTimeout(function() {
+            console.log('Redirecting to index.html');
+            window.location.href = 'index.html';
+          }, 2000); // تأخير لمدة 2 ثانية قبل إعادة التوجيه
+        }
+      } catch (error) {
+        console.error('An error occurred:', error);
+        let message = document.getElementById('message');
+        message.textContent = 'حدث خطأ أثناء عملية التأكيد. يرجى المحاولة مرة أخرى.';
+        message.style.color = 'red';
+      }
+    });
+  }
+});
+
+  </script>
+{
+    "liveServer.settings.port": 5503
+}
+</body>
+</html>
